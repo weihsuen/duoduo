@@ -21,10 +21,14 @@ experience_bank = st.text_area(
 )
 
 if st.button("Generate Tailored Resume", use_container_width=True):
-    prompt_input = f"Job: {selected_job}\n\nExperience:\n{experience_bank}"
-    resume_md = call_llm(RESUME_GENERATION_PROMPT, prompt_input)
-    st.session_state.generated_resume = resume_md
-    save_resume({"job_id": selected_job.get("id"), "content": resume_md})
+    if not experience_bank.strip():
+        st.warning("Add your experience bank first.")
+    else:
+        with st.spinner("Generating tailored resume..."):
+            prompt_input = f"Job: {selected_job}\n\nExperience:\n{experience_bank}"
+            resume_md = call_llm(RESUME_GENERATION_PROMPT, prompt_input)
+            st.session_state.generated_resume = resume_md
+            save_resume({"job_id": selected_job.get("id"), "content": resume_md})
 
 st.subheader("Tailored resume preview")
 resume_content = st.session_state.get(
