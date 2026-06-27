@@ -29,26 +29,88 @@ if "feedback" not in st.session_state:
     st.session_state.feedback = ""
 if "score" not in st.session_state:
     st.session_state.score = calculate_dummy_score()
+    
+def infer_company_and_role(text: str):
+    prompt = """
+            Extract the company name and job title from the text below.
+
+            Return JSON:
+            {
+            "company": "...",
+            "role": "..."
+            }
+
+            If unknown, use null.
+            """
+
+    result = call_llm(prompt, text)
+    parsed = safe_parse_json(result)
+    return parsed.get("company"), parsed.get("role")
 
 col_url, col_desc = st.columns(2)
 with col_url:
     job_url = st.text_input("Job listing URL", placeholder="https://...")
 with col_desc:
     job_description = st.text_area(
-        "Manual job description (optional)",
-        height=120,
-        placeholder="Paste job description if you don't have a URL.",
+        "Paste Job Description (used if extraction fails)",
+        height=220,
+        placeholder="""
+    Paste the full job description here if the URL cannot be scraped.
+
+    Example:
+    Responsibilities:
+    ...
+
+    Requirements:
+    ...
+    """,
     )
 
 btn_col1, btn_col2 = st.columns(2)
 with btn_col1:
     if st.button("Extract Job Listing", use_container_width=True):
+
         with st.spinner("Extracting job listing..."):
-            st.session_state.extracted_job = extract_job_listing(job_url or "")
-            st.session_state.keywords = st.session_state.extracted_job.get("keywords", [])
+
+            result = extract_job_listing(job_url)
+
+            st.session_state.extracted_job = result
+            st.session_state.keywords = result.get(
+                "keywords",
+                [],
+            )
+
+            if result.get("manual_input_required"):
+
+                st.warning(
+                    "⚠️ This job page could not be extracted.\n\n"
+                    "Please paste the job description into the box on the right "
+                    "and click **Analyze Job**."
+                )
+
+            elif result.get("error"):
+
+                st.error(
+                    result["error"]
+                )
+
+            else:
+
+                st.success(
+                    "Job extracted successfully."
+                )
 with btn_col2:
     if st.button("Analyze Job", use_container_width=True):
-        text = job_description or (st.session_state.extracted_job or {}).get("description", "")
+        text = (
+            job_description.strip()
+            or (
+                st.session_state.extracted_job
+                or {}
+            ).get(
+                "description",
+                ""
+            )
+        )
         if not text.strip():
             st.warning("Add a job URL or paste a job description first.")
         else:
@@ -60,6 +122,8 @@ with btn_col2:
                     st.session_state.keywords = parsed["skills"]
                 company = (st.session_state.extracted_job or {}).get("company", "Company")
                 role = (st.session_state.extracted_job or {}).get("title", "Role")
+                if not company or not role:
+                    company, role = infer_company_and_role(text)
                 st.session_state.interview_sources = search_interview_info(company, role)
 
 st.subheader("Extracted keywords")
