@@ -5,9 +5,9 @@ Return ONLY valid JSON (no markdown fences) with keys:
 - seniority: string (e.g. junior, mid, senior)
 - summary: one-paragraph overview for the candidate"""
 
-INTERVIEW_QUESTION_PROMPT = """Generate exactly 5 interview questions tailored to this job listing.
+INTERVIEW_QUESTION_PROMPT = """Generate exactly 10 interview questions tailored to this job listing.
 Mix behavioral and technical questions.
-Return one question per line, numbered 1-5. No extra commentary."""
+Return one question per line, numbered 1-10. No extra commentary."""
 
 INTERVIEW_FEEDBACK_PROMPT = """Review the candidate's interview practice answers.
 Give concise, actionable feedback on clarity, relevance, and areas to improve.
