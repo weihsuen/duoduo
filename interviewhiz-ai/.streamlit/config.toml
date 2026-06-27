@@ -1,0 +1,12 @@
+[server]
+address = "0.0.0.0"
+port = 8501
+headless = true
+enableCORS = false
+enableXsrfProtection = false
+enableWebsocketCompression = false
+
+[browser]
+gatherUsageStats = false
+serverAddress = "interviewhiz-ai-evelynx.zocomputer.io"
+serverPort = 443
