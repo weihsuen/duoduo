@@ -2,6 +2,7 @@
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
+-- Table 1: job_listings
 CREATE TABLE IF NOT EXISTS job_listings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     url TEXT,
@@ -13,6 +14,7 @@ CREATE TABLE IF NOT EXISTS job_listings (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Table 2: interview_sessions
 CREATE TABLE IF NOT EXISTS interview_sessions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     job_id UUID REFERENCES job_listings(id) ON DELETE SET NULL,
@@ -23,6 +25,7 @@ CREATE TABLE IF NOT EXISTS interview_sessions (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Table 3: resumes
 CREATE TABLE IF NOT EXISTS resumes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     job_id UUID REFERENCES job_listings(id) ON DELETE SET NULL,
@@ -31,6 +34,7 @@ CREATE TABLE IF NOT EXISTS resumes (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Table 4: applications
 CREATE TABLE IF NOT EXISTS applications (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     job_id UUID REFERENCES job_listings(id) ON DELETE CASCADE,
