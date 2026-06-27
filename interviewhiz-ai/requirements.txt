@@ -3,3 +3,4 @@ requests
 pandas
 supabase
 python-dotenv
+openai

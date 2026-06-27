@@ -45,3 +45,19 @@ CREATE TABLE IF NOT EXISTS applications (
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE (job_id)
 );
+
+-- Table 5: resume_items
+-- Stores reusable projects, achievements, work experience, leadership, etc.
+
+CREATE TABLE IF NOT EXISTS resume_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    item_type TEXT NOT NULL DEFAULT 'Project',
+    title TEXT NOT NULL,
+    organization TEXT,
+    date_range TEXT,
+    skills TEXT,
+    description TEXT NOT NULL,
+    metadata JSONB DEFAULT '{}'::jsonb,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
