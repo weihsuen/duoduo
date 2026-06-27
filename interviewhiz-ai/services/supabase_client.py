@@ -263,22 +263,3 @@ def get_resumes_by_job(job_id):
     )
 
     return response.data or []
-
-def save_interview_session(payload):
-    supabase = get_supabase_client()
-
-    clean_payload = {
-        "job_id": payload.get("job_id"),
-        "questions": payload.get("questions") or [],
-        "answers": payload.get("answers") or [],
-        "feedback": payload.get("feedback"),
-        "scores": payload.get("scores") or {},
-        "created_at": datetime.utcnow().isoformat(),
-    }
-
-    return (
-        supabase
-        .table("interview_sessions")
-        .insert(clean_payload)
-        .execute()
-    ).data
